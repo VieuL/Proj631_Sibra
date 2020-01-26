@@ -115,6 +115,16 @@ class Ligne:
     def get_arrets(self):
         return self.arrets
     
+    def ajout_correspondance(self,ligne2) :
+        for i in range(len(self.arrets)):
+            for j in range(len(ligne2.arrets)):
+                if self.arrets[i] == ligne2.arrets[j] :
+                    if self.arrets[i] not in self.correspondance or ligne2.arrets[j] not in ligne2.correspondance:
+                        self.correspondance.append(self.arrets[i])
+                        # ligne2.correspondance.append(ligne2.arrets[j])
+                        
+    
+    
     
     
 class Voyage:

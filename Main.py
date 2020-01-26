@@ -123,8 +123,8 @@ ajout_arrets_ligne(regular_path2,ligne2)
 creation_var_arret(ligne1,'varl1_',regular_date_go,we_holidays_date_go,regular_date_back,we_holidays_date_back,1)
 creation_var_arret(ligne2,'varl2_',regular_date_go2,we_holidays_date_go2,regular_date_back2,we_holidays_date_back2,2)
 
-
-
+ligne1.ajout_correspondance(ligne2)
+ligne2.ajout_correspondance(ligne1)
 # =============================================================================
 # Test console
 # =============================================================================
@@ -133,9 +133,11 @@ creation_var_arret(ligne2,'varl2_',regular_date_go2,we_holidays_date_go2,regular
 #print(varl1_0.suivant,varl1_0.precedant,varl1_0.ligne)
 #print(ligne1.arrets)
 
-print(varl1_1.premier_bus('8:22','g','n'))
+# print(varl1_1.premier_bus('8:22','g','n'))
+# print(varl1_1.difference(varl1_2,18,'g','n'))
 
-
+print(ligne1.correspondance)
+print(ligne2.correspondance)
 
 
 
