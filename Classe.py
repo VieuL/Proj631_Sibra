@@ -47,6 +47,10 @@ class Arret:
         
     def get_nom(self):
         return self.nom_arret
+    
+    
+    
+    
 # =============================================================================
 # Création des primitives    
 # =============================================================================
@@ -83,6 +87,9 @@ class Arret:
         else:
             print ('Erreur')
     
+    
+    
+    
     def difference(self,arret,i,s,h):
         '''
         Cette fonction renvoi le temps d'att entre deux arrets pour un bus donnée
@@ -96,7 +103,15 @@ class Arret:
         elif s =='b' and h == 'w' :
             return arret.heure_wk_back[i] - self.heure_wk_back[i] 
         
-        
+  
+
+
+
+
+
+
+
+      
 class Ligne:
     def __init__(self ,nom = int(), arrets = [], correspondance = []):
         self.nom = nom
@@ -115,25 +130,113 @@ class Ligne:
     def get_arrets(self):
         return self.arrets
     
+    
+    
+    
     def ajout_correspondance(self,ligne2) :
+        '''
+        Recherche les arrets en commun entre deux lignes
+        '''
+        l = []
         for i in range(len(self.arrets)):
             for j in range(len(ligne2.arrets)):
-                if self.arrets[i] == ligne2.arrets[j] :
+                if self.arrets[i].get_nom() == ligne2.arrets[j].get_nom() :
                     if self.arrets[i] not in self.correspondance or ligne2.arrets[j] not in ligne2.correspondance:
-                        self.correspondance.append(self.arrets[i])
-                        # ligne2.correspondance.append(ligne2.arrets[j])
+                        l.append([self.arrets[i],ligne2])
+                    
+        self.set_correspondance(l)
+        l = []
                         
+                        
+        
+    def ajout_arret(self,dic) :
+        l = []
+        for t in dic.values():
+            if t.ligne.nom == self.nom:
+                l.append(t)
+        self.set_arrets(l)
+        l = []
+                        
+    
+    
+    
+ 
+    
     
     
     
     
 class Voyage:
-    def __init__(self ,destination, depart, moment = str()):
-        self.destination = destination
+    def __init__(self , depart, arrivee, moment = str()):
         self.depart = depart
+        self.arrivee = arrivee
         self.moment = moment
         
     
+    
+    
+    def direction_short(self):
+        '''
+        Cette fonction nous donne la direction pour faire le trajet entre deux arrets et qu'elles lignes il faut prendre
+        '''
+        ligne_depart = self.depart.ligne.nom
+        ligne_arrivee = self.arrivee.ligne.nom
+        
+        if ligne_arrivee == ligne_depart:
+            
+            if self.depart.ligne.get_arrets().index(self.depart.get_nom()) < self.arrivee.ligne.get_arrets().index(self.arrivee.get_nom()):
+                s = 'g'
+            elif self.depart.ligne.get_arrets().index(self.depart.get_nom()) < self.arrivee.ligne.get_arrets().index(self.arrivee.get_nom()):
+                print('deja a destination')
+            else: 
+                s = 'b'
+                
+                
+        else:
+            pass
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
 

@@ -63,19 +63,7 @@ we_holidays_date_back2 = dates2dic(slited_content2[5])
 ligne1 = Ligne(1)
 ligne2 = Ligne(2)
 
-
-def ajout_arrets_ligne(path,ligne):
-    """
-    Rajoute l'ensemble des arrets de bus dans un objet de type Ligne
-    """
-    # Création de tout les arrets
-    path = path.replace('+','N')
-    path = path.split(' N ')
-    
-#    for u in range(len(path)):
-#        path[u] = path[u].lower()
-#    # Ajout des arrets dans le ligne 1
-    ligne.set_arrets(path)  
+data = {}
     
 def arret_suivant(path):
     '''
@@ -93,11 +81,18 @@ def arret_suivant(path):
             fin.append([a[1],n[i+1]])
             a = []
         elif i < len(n)-1:
-            fin.append([n[i],n[i+1]])
+            fin.append([n[i],[n[i+1]]])
             
     return fin
+
+
+
     
 def arret_pre(path):
+    '''
+    créer une liste avec [arret, arret_suivant]
+    
+    '''
     n = path.split(' N ')
     fin = []
     for i in range(-1,-len(n),-1):
@@ -105,8 +100,11 @@ def arret_pre(path):
             a = n[i-1].split(" + ")
             fin.append([n[i],[a[0],a[1]]])
         elif i > -len(n):
-            fin.append([n[i],n[i-1]])
+            fin.append([n[i],[n[i-1]]])
     return fin 
+
+
+
     
 def transforme_en_heur(liste):
     '''
@@ -124,6 +122,22 @@ def transforme_en_heur(liste):
             a.append(u)
     return a
         
+
+
+
+def changement_suivant_pre(data):
+    for t in data.values():
+        for w in data.values():
+            for i in range(len(w.suivant)):
+                if t.get_nom() == w.suivant[i]:
+                    w.suivant[i] = t
+            for u in range(len(w.precedant)):
+                if t.get_nom() == w.precedant[u]:
+                    w.precedant[u] = t
+
+
+
+
 def creation_var_arret(ligne,pre,date_n_go,date_wk_go,date_n_back,date_wk_back,path):
     """
     Cette fonction a pour objectif de crée les variables et les constructeurs de la classe
@@ -131,37 +145,81 @@ def creation_var_arret(ligne,pre,date_n_go,date_wk_go,date_n_back,date_wk_back,p
     l'ensemble des horraires et le numéro de la ligne
     """
     
-    for i in range(len(ligne.arrets)):
-#        datetime.datetime.strptime(date_n_go[ligne.arrets[i]], '%H:%M')
-        globals()[str(pre) + str(i)] = Arret(ligne.arrets[i])
-        globals()[str(pre) + str(i)].set_heure_normal_go(transforme_en_heur(date_n_go[ligne.arrets[i]]))
-        globals()[str(pre) + str(i)].set_heure_wk_go(transforme_en_heur(date_wk_go[ligne.arrets[i]]))
-        globals()[str(pre) + str(i)].set_heure_normal_back(transforme_en_heur(date_n_back[ligne.arrets[i]]))
-        globals()[str(pre) + str(i)].set_heure_wk_back(transforme_en_heur(date_wk_back[ligne.arrets[i]]))
-        
+    arrets = path.replace('+','N')
+    arrets = arrets.split(' N ')
+    
+    for i in range(len(arrets)):
+        #Création de tous les arrets
+        data[str(pre) + str(i)] = Arret(arrets[i])
+    for m in range(len(arrets)):
+        data[str(pre) + str(m)].set_heure_normal_go(transforme_en_heur(date_n_go[arrets[m]]))
+        data[str(pre) + str(m)].set_heure_wk_go(transforme_en_heur(date_wk_go[arrets[m]]))
+        data[str(pre) + str(m)].set_heure_normal_back(transforme_en_heur(date_n_back[arrets[m]]))
+        data[str(pre) + str(m)].set_heure_wk_back(transforme_en_heur(date_wk_back[arrets[m]]))
+        data[str(pre) + str(m)].set_ligne(ligne)
         n = arret_suivant(path)
         p = arret_pre(path)
         for j in range(len(n)):
-            if ligne.arrets[i] == n[j][0]:
-                 globals()[str(pre) + str(i)].set_suivant([n[j][1]])
+            if arrets[m] == n[j][0]:
+                 data[str(pre) + str(m)].set_suivant(n[j][1])
         
         for k in range(len(p)):
-            if ligne.arrets[i] == p[k][0]:
-                 globals()[str(pre) + str(i)].set_precedant([p[k][1]])
+            if arrets[m] == p[k][0]:
+                 data[str(pre) + str(m)].set_precedant(p[k][1])
+
+
+
+        
 # =============================================================================
 # Programme Principal
 # =============================================================================
 
 # Création des lignes de bus
-ajout_arrets_ligne(regular_path,ligne1)
-ajout_arrets_ligne(regular_path2,ligne2)
+
 
 #Création d'une variable pour chaque arrets
 creation_var_arret(ligne1,'varl1_',regular_date_go,we_holidays_date_go,regular_date_back,we_holidays_date_back,regular_path)
 creation_var_arret(ligne2,'varl2_',regular_date_go2,we_holidays_date_go2,regular_date_back2,we_holidays_date_back2,regular_path2)
 
+ligne1.ajout_arret(data)
+ligne2.ajout_arret(data)
+
+
+changement_suivant_pre(data)
 ligne1.ajout_correspondance(ligne2)
 ligne2.ajout_correspondance(ligne1)
+
+
+
+
+print(datetime.datetime.today().isocalendar())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -172,8 +230,7 @@ ligne2.ajout_correspondance(ligne1)
 # =============================================================================
 
 #print(varl1_1.nom_arret,varl1_1.heure_normal_go, '\n\n',varl1_1.heure_wk_go,'\n\n',varl1_1.heure_normal_back,'\n\n',varl1_1.heure_wk_back)
-#print(varl1_0.suivant,varl1_0.precedant)
-#print(ligne1.arrets)
+#print(varl1_3.suivant,varl1_3.precedant)
 # print(varl1_1.premier_bus('8:22','g','n'))
 # print(varl1_1.difference(varl1_2,18,'g','n'))
 #print(ligne1.correspondance)
@@ -182,7 +239,8 @@ ligne2.ajout_correspondance(ligne1)
 #print(arret_suivant(regular_path))
 #print(arret_pre(regular_path))
 
-
+#trajet1 = Voyage(varl1_4,varl1_8)
+#trajet1.direction_short()
 
 
 
