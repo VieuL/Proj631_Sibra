@@ -167,30 +167,52 @@ class Ligne:
     
     
 class Voyage:
-    def __init__(self , depart, arrivee, moment = str()):
+    def __init__(self ,reseau, depart, arrivee, moment = str(),heure = str):
+        self.reseau = reseau
         self.depart = depart
         self.arrivee = arrivee
         self.moment = moment
-        
+        self.heure = heure
+        for i in self.reseau.values():
+            if self.arrivee == i.get_nom():
+                self.arr = i
+            if self.depart == i.get_nom():
+                self.dep = i
+
+    def num_bus(self,direct):
+        return self.arr.premier_bus(self.heure,direct,self.moment)
     
-    
-    
-    def direction_short(self):
+    def direction_plus_cours(self):
         '''
         Cette fonction nous donne la direction pour faire le trajet entre deux arrets et qu'elles lignes il faut prendre
         '''
-        ligne_depart = self.depart.ligne.nom
-        ligne_arrivee = self.arrivee.ligne.nom
+        ligne_depart = self.dep.ligne.nom
+        ligne_arrivee = self.arr.ligne.nom
+        j = 0
+        
         
         if ligne_arrivee == ligne_depart:
             
-            if self.depart.ligne.get_arrets().index(self.depart.get_nom()) < self.arrivee.ligne.get_arrets().index(self.arrivee.get_nom()):
+            if self.dep.ligne.get_arrets().index(self.dep) < self.arr.ligne.get_arrets().index(self.arr):
                 s = 'g'
-            elif self.depart.ligne.get_arrets().index(self.depart.get_nom()) < self.arrivee.ligne.get_arrets().index(self.arrivee.get_nom()):
-                print('deja a destination')
+                self.trajet = self.dep.ligne.get_arrets()[self.dep.ligne.get_arrets().index(self.dep):self.arr.ligne.get_arrets().index(self.arr)+1]
+                
+            elif self.dep.ligne.get_arrets().index(self.dep) == self.arr.ligne.get_arrets().index(self.arr):
+                return('deja a destination')
+                
             else: 
                 s = 'b'
-                
+                self.trajet = self.dep.ligne.get_arrets()[self.arr.ligne.get_arrets().index(self.arr):self.dep.ligne.get_arrets().index(self.dep)+1]
+            
+            for i in range(len(self.trajet)) :
+                if self.trajet[i] == self.dep.ligne.get_arrets():
+                    j = 1
+                    
+            if j == 0:
+            #Si il n'y a pas d'arret
+                bus_num = self.num_bus(s)
+                res = self.dep.difference(self.arr,bus_num[1],s,self.moment)
+                return res
                 
         else:
             pass

@@ -189,11 +189,9 @@ changement_suivant_pre(data)
 ligne1.ajout_correspondance(ligne2)
 ligne2.ajout_correspondance(ligne1)
 
+v1 = Voyage(data,'Vernod','Chorus','n','8:22')
 
-
-
-print(datetime.datetime.today().isocalendar())
-
+print(v1.direction_plus_cours())
 
 
 
