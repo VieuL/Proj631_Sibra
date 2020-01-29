@@ -191,29 +191,24 @@ ligne2.ajout_correspondance(ligne1)
 
 
 
-h =datetime.datetime.strptime('8:22', '%H:%M')
-gar = data['varl1_6']
-#print(gar.get_nom())
-#print(gar.tout_les_voisins())
-a = gar.calcule_temps_arret_suivant('n',h)
+
+
+#v1 = Voyage(data,'Vernod','Chorus','n','8:22')
+#plus_cours(v1)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def changement_dic(dic):
+    ndic = dic.values()
+    ndic = list(ndic)
+    d = {}
+    for i in range(len(ndic)):
+        d[ndic[i]] = float('inf')
+    return d
+d = changement_dic(data)
+v1 = Voyage(data,'Meythet_Le_Rabelais','Chorus','n','8:22')
+plus_cours(v1,d)
 
 
 
@@ -242,6 +237,14 @@ a = gar.calcule_temps_arret_suivant('n',h)
 #print(v1.direction_plus_cours())
 #
 #
+
+
+
+#h =datetime.datetime.strptime('8:22', '%H:%M')
+#gar = data['varl1_4']
+#print(gar.get_nom())
+#print(gar.tout_les_voisins())
+#a = gar.calcule_temps_arret_suivant('n',h)
 
 
 

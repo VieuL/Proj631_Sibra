@@ -140,7 +140,7 @@ class Arret:
                             
                             retour = [deux.get_arrets()[j].get_precenant() + ['b'] + [deux.get_arrets()[j]], deux.get_arrets()[j].get_suivant() + ['g'] + [deux.get_arrets()[j]] , self.get_precenant() +  ['b'] + [self],self.get_suivant() + ['g'] + [self]]
         else:
-            retour = [ self.get_precenant() + ['b'] + self , self.get_suivant() + ['g'] + self]
+            retour = [ self.get_precenant() + ['b'] + [self] , self.get_suivant() + ['g'] + [self]]
             
         return retour
 
@@ -241,8 +241,12 @@ class Voyage:
         return self.arr.premier_bus(self.heure,direct,self.moment)
     
  
-    
-
+    def get_arr(self):
+        return self.arr
+    def get_dep(self):
+        return self.dep
+    def get_reseau(self) :
+        return self.reseau
     
     
     
@@ -282,4 +286,23 @@ class Voyage:
         else:
             pass
         
-        
+def changement_dic(dic):
+    ndic = dic.values()
+    ndic = list(ndic)
+    d = {}
+    for i in range(len(ndic)):
+        d[ndic[i]] = float('inf')
+
+      
+def plus_cours(voyage,dist,etape = Arret(''),visite = []):
+    if voyage.get_arr() == voyage.get_dep():
+        return dist[voyage.get_arr()]
+    if len(visite) == 0  : 
+        etape = voyage.get_dep()
+        dist[etape] = 0
+    v = etape.calcule_temps_arret_suivant('n',voyage.heure)
+    
+    for voisin in v:
+        print(voisin[1] ,visite)
+
+#    return plus_cours(voyage.get_reseau,noeud_plus_proche,visite,dist)
