@@ -189,15 +189,13 @@ changement_suivant_pre(data)
 ligne1.ajout_correspondance(ligne2)
 ligne2.ajout_correspondance(ligne1)
 
-v1 = Voyage(data,'Vernod','Chorus','n','8:22')
-
-print(v1.direction_plus_cours())
 
 
-
-
-
-
+h =datetime.datetime.strptime('8:22', '%H:%M')
+gar = data['varl1_6']
+#print(gar.get_nom())
+#print(gar.tout_les_voisins())
+a = gar.calcule_temps_arret_suivant('n',h)
 
 
 
@@ -239,10 +237,11 @@ print(v1.direction_plus_cours())
 
 #trajet1 = Voyage(varl1_4,varl1_8)
 #trajet1.direction_short()
-
-
-
-
+#
+#v1 = Voyage(data,'Vernod','Chorus','n','8:22')
+#print(v1.direction_plus_cours())
+#
+#
 
 
 

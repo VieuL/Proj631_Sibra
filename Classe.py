@@ -48,22 +48,29 @@ class Arret:
     def get_nom(self):
         return self.nom_arret
     
+    def get_linge(self):
+        return self.ligne
+    def get_precenant(self):
+        return self.precedant
+    def get_suivant(self):
+        return self.suivant
+    
     
     
     
 # =============================================================================
 # Création des primitives    
 # =============================================================================
-    def premier_bus(self,he,dest,h):
+    def premier_bus(self,heure,dest,h):
         '''
         Cette fonction prend comme paramètre
-         - une heure(str) au format HH:MM
+         - une heure au format 
          - une destination: Back ou Go
          - une periode: normal ou wk
         '''
         # dest = input('Go: g ou Black : b    :')
         # h = input('Normal: n ou WK: w       :')
-        heure = datetime.datetime.strptime(he, '%H:%M')
+#        heure = datetime.datetime.strptime(he, '%H:%M')
 
         if dest == 'g' and h == 'n':
             for i in range(len(self.heure_normal_go)):
@@ -104,13 +111,55 @@ class Arret:
             return arret.heure_wk_back[i] - self.heure_wk_back[i] 
         
   
+    
+    
+    def tout_les_voisins(self):
+        '''
+        Prends en paramètre un arret et retourne les voisins de cette arret, si la ligne est sur correspondance alors elle renvoie aussi les arrets voisins sur l'aurtre ligne
+        '''
+        retour = []
+        
+        for u in range(len(self.get_linge().get_correspondance())):
+            if self.get_linge().get_correspondance()[u][0].get_nom() == self.get_nom():
+                v = True
+                break
+            else:
+                v = False
+                
+                
+        if v:
+            # Dans correspondance de la classe ligne nous avons l'ensemble des arrets qui  sont en commun avec une autre ligne et cette ligne
+            for i in range(len(self.get_linge().get_correspondance())):
+                if self.get_nom() == self.get_linge().get_correspondance()[i][0].get_nom():
+                    #Nous récupérons la deusieme ligne
+                    
+                    deux = self.get_linge().get_correspondance()[i][1]
+                    
+                    for j in range(len(deux.get_arrets())):
+                        if self.get_nom() == deux.get_arrets()[j].get_nom():
+                            
+                            retour = [deux.get_arrets()[j].get_precenant() + ['b'] + [deux.get_arrets()[j]], deux.get_arrets()[j].get_suivant() + ['g'] + [deux.get_arrets()[j]] , self.get_precenant() +  ['b'] + [self],self.get_suivant() + ['g'] + [self]]
+        else:
+            retour = [ self.get_precenant() + ['b'] + self , self.get_suivant() + ['g'] + self]
+            
+        return retour
 
 
-
-
-
-
-
+    
+    def calcule_temps_arret_suivant(self,periode,heure):
+        '''
+        calcule le temps pour tout les arrets suivants, sur la ligne en cours ou non
+        '''
+        voisin = self.tout_les_voisins()
+        retoune = []
+        for i in range(len(voisin)):
+            bus_num = voisin[i][2].premier_bus(heure,voisin[i][1],periode)
+            retoune.append([voisin[i][2].difference(voisin[i][0],bus_num[1],voisin[i][1],periode),voisin[i][0]])
+        return retoune
+    
+    
+    
+    
       
 class Ligne:
     def __init__(self ,nom = int(), arrets = [], correspondance = []):
@@ -129,6 +178,8 @@ class Ligne:
         
     def get_arrets(self):
         return self.arrets
+    def get_correspondance(self):
+        return self.correspondance
     
     
     
@@ -137,6 +188,7 @@ class Ligne:
         '''
         Recherche les arrets en commun entre deux lignes
         '''
+        
         l = []
         for i in range(len(self.arrets)):
             for j in range(len(ligne2.arrets)):
@@ -149,7 +201,13 @@ class Ligne:
                         
                         
         
+        
     def ajout_arret(self,dic) :
+        '''
+        Ajoute les arrets  de cette ligne dans la liste arrets
+        '''
+        
+        
         l = []
         for t in dic.values():
             if t.ligne.nom == self.nom:
@@ -167,12 +225,12 @@ class Ligne:
     
     
 class Voyage:
-    def __init__(self ,reseau, depart, arrivee, moment = str(),heure = str):
+    def __init__(self ,reseau, depart, arrivee, moment = str(),he = str):
         self.reseau = reseau
         self.depart = depart
         self.arrivee = arrivee
         self.moment = moment
-        self.heure = heure
+        self.heure = datetime.datetime.strptime(he, '%H:%M')
         for i in self.reseau.values():
             if self.arrivee == i.get_nom():
                 self.arr = i
@@ -181,6 +239,13 @@ class Voyage:
 
     def num_bus(self,direct):
         return self.arr.premier_bus(self.heure,direct,self.moment)
+    
+ 
+    
+
+    
+    
+    
     
     def direction_plus_cours(self):
         '''
@@ -218,47 +283,3 @@ class Voyage:
             pass
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
