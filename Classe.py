@@ -296,6 +296,11 @@ class Voyage:
             pass
         
 def changement_dic(dic):
+    """
+    :param dic: le dictionaire avec tout les arrets
+    :return: un nouveau dictionaire avec comme keys un objet arret et comme value la valeur infini
+    cette fonction est utilisé pour l'algo dijktra
+    """
     ndic = dic.values()
     ndic = list(ndic)
     d = {}
@@ -304,14 +309,36 @@ def changement_dic(dic):
 
       
 def plus_cours(voyage,dist,etape = Arret(''),visite = []):
-    if voyage.get_arr() == voyage.get_dep():
+    # !!! Attention !!! il y a deux noeud gare a voire si cela va poser problème
+    # Condition de fin :
+    # Quand on traite le noeud de fin alors nous avons fini nous retrournons donc la distance ici un temps
+    if voyage.get_arr() == etape:
         return dist[voyage.get_arr()]
-    if len(visite) == 0  : 
-        etape = voyage.get_dep()
-        dist[etape] = 0
-    v = etape.calcule_temps_arret_suivant('n',voyage.heure)
-    
-    for voisin in v:
-        print(voisin[1] ,visite)
 
-#    return plus_cours(voyage.get_reseau,noeud_plus_proche,visite,dist)
+    # Si aucun noeud n'a été visité
+    if len(visite) == 0  :
+        #On donne comme première etape le debut du voyage
+        etape = voyage.get_dep()
+
+        # on inisialise la distance pour cette etape a 0
+        dist[etape] = datetime.timedelta()
+
+
+    # On calcule les temps pour tous les arrets de l'etape en cours et on donne les voisins
+    # Dans [0] il y a le temps et dans [1] le voisin
+    v = etape.calcule_temps_arret_suivant('n',voyage.heure)
+    # print(etape)
+    # print('\n\n\n')
+    # print(dist[etape])
+    # print('\n\n\n')
+    for voisin in v:
+        if voisin[1] not in visite:
+            dist_voisin = dist.get(voisin[1], datetime.timedelta(99999999))
+            candidat_dist = dist[etape] + voisin[0]
+            if candidat_dist < dist_voisin:
+                dist[voisin[1]] = candidat_dist
+    visite.append(etape)
+    non_visites = dict((s, dist.get(s, datetime.timedelta(99999999))) for s in voyage.reseau.values() if s not in visite)
+    noeud_plus_proche = min(non_visites, key = non_visites.get)
+
+    return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite)
