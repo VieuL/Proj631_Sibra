@@ -77,8 +77,9 @@ def arret_suivant(path):
         if ' + ' in n[i] :
             
             a = n[i].split(" + ")
-            fin.append([a[0],n[i+1]])
-            fin.append([a[1],n[i+1]])
+            
+            fin.append([a[0],[n[i+1]]])
+            fin.append([a[1],[n[i+1]]])
             a = []
         elif i < len(n)-1:
             fin.append([n[i],[n[i+1]]])
@@ -126,10 +127,15 @@ def transforme_en_heur(liste):
 
 
 def changement_suivant_pre(data):
+    #on parcour tous les arrets
     for t in data.values():
+        
+        #on parcour tous les arrets
         for w in data.values():
+            
             for i in range(len(w.suivant)):
                 if t.get_nom() == w.suivant[i]:
+                    
                     w.suivant[i] = t
             for u in range(len(w.precedant)):
                 if t.get_nom() == w.precedant[u]:
@@ -159,13 +165,15 @@ def creation_var_arret(ligne,pre,date_n_go,date_wk_go,date_n_back,date_wk_back,p
         data[str(pre) + str(m)].set_ligne(ligne)
         n = arret_suivant(path)
         p = arret_pre(path)
+        
         for j in range(len(n)):
             if arrets[m] == n[j][0]:
-                 data[str(pre) + str(m)].set_suivant(n[j][1])
-        
+                
+                data[str(pre) + str(m)].set_suivant((n[j][1]))
+                
         for k in range(len(p)):
             if arrets[m] == p[k][0]:
-                 data[str(pre) + str(m)].set_precedant(p[k][1])
+                 data[str(pre) + str(m)].set_precedant(list(p[k][1]))
 
 
 
@@ -184,8 +192,8 @@ creation_var_arret(ligne2,'varl2_',regular_date_go2,we_holidays_date_go2,regular
 ligne1.ajout_arret(data)
 ligne2.ajout_arret(data)
 
-
 changement_suivant_pre(data)
+
 ligne1.ajout_correspondance(ligne2)
 ligne2.ajout_correspondance(ligne1)
 
@@ -206,12 +214,13 @@ def changement_dic(dic):
     for i in range(len(ndic)):
         d[ndic[i]] = float('inf')
     return d
-d = changement_dic(data)
-v1 = Voyage(data,'Meythet_Le_Rabelais','Chorus','n','8:22')
-plus_cours(v1,d)
+#d = changement_dic(data)
+#v1 = Voyage(data,'Meythet_Le_Rabelais','Chorus','n','8:22')
+#plus_cours(v1,d)
 
 
-
+gar = data['varl2_11']
+print(gar.tout_les_voisins())
 
 
 

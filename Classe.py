@@ -129,10 +129,12 @@ class Arret:
                 
         if v:
             # Dans correspondance de la classe ligne nous avons l'ensemble des arrets qui  sont en commun avec une autre ligne et cette ligne
+            # Il y a un problème dans le cas d'une fourche
+            
             for i in range(len(self.get_linge().get_correspondance())):
                 if self.get_nom() == self.get_linge().get_correspondance()[i][0].get_nom():
-                    #Nous récupérons la deusieme ligne
                     
+                    #Nous récupérons la deusieme ligne
                     deux = self.get_linge().get_correspondance()[i][1]
                     
                     for j in range(len(deux.get_arrets())):
@@ -140,8 +142,15 @@ class Arret:
                             
                             retour = [deux.get_arrets()[j].get_precenant() + ['b'] + [deux.get_arrets()[j]], deux.get_arrets()[j].get_suivant() + ['g'] + [deux.get_arrets()[j]] , self.get_precenant() +  ['b'] + [self],self.get_suivant() + ['g'] + [self]]
         else:
-            retour = [ self.get_precenant() + ['b'] + [self] , self.get_suivant() + ['g'] + [self]]
-            
+            for u in range(len(self.get_precenant())):
+                
+                a =  [self.get_precenant()[u]] + ['b'] + [self]
+                
+                retour.append(a)
+            for u in range(len(self.get_suivant())):
+                 
+                 a = [self.get_suivant()[u]] + ['g'] + [self]
+                 retour.append(a)
         return retour
 
 
