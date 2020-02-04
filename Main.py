@@ -189,22 +189,13 @@ ligne1.ajout_correspondance(ligne2)
 ligne2.ajout_correspondance(ligne1)
 
 
-# v1 = Voyage(data,'Vernod','Chorus','n','8:22')
-# plus_cours(v1)
 
 
-def changement_dic(dic):
-    ndic = dic.values()
-    ndic = list(ndic)
-    d = {}
-    for i in range(len(ndic)):
-        d[ndic[i]] = datetime.timedelta(99999999)
-    return d
+v1 = Voyage(data,'Meythet_Le_Rabelais',1,'GARE',1,'n','8:22')
+# print(v1.arr.ligne.nom)
+print(plus_cours(v1))
 
 
-d = changement_dic(data)
-v1 = Voyage(data,'Meythet_Le_Rabelais','Chorus','n','8:22')
-plus_cours(v1,d)
 
 
 
