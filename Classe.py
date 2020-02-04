@@ -324,7 +324,6 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[]):
     # print('\n')
     # print(visite)
     # print(voyage.heure + dist[noeud_plus_proche])
-
     # print(noeud_plus_proche.calcule_temps_arret_suivant('n', voyage.heure))
 
     return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite)
