@@ -263,8 +263,20 @@ def changement_dic(dic):
         d[ndic[i]] = datetime.timedelta(99999999)
     return d
 
+def changement_dic_parcour(dic):
+    '''
+    :param dic: Donne en paramètre un dictionnaire avec l'ensemble des données pour le réseau
+    :return: Créer un nouveau dictionnaire avec l'ensemble des arrets et comme valeur un temps considéré comme l'infinie
+    '''
 
-def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[]):
+    ndic = dic.values()
+    ndic = list(ndic)
+    d = {}
+    for i in range(len(ndic)):
+        d[ndic[i]] = []
+    return d
+
+def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[], parcour = {}):
     '''
     :param voyage: Classe Voyage
     :param dist: Dictionnaire des distances
@@ -275,12 +287,13 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[]):
     # Condition de fin :
     # Quand on traite le noeud de fin alors nous avons fini nous retrournons donc la distance ici un temps
     if voyage.get_arr().get_nom() == etape.get_nom():
-        return dist[voyage.get_arr()]
+        return dist[voyage.get_arr()] , parcour[voyage.get_arr()]
 
     # Si aucun noeud n'a été visite
     if len(visite) == 0:
         # On donne comme première etape le debut du voyage
         dist = changement_dic(voyage.reseau)
+        parcour = changement_dic_parcour(voyage.reseau)
         etape = voyage.get_dep()
         # on inisialise la distance pour cette etape a 0
         dist[etape] = datetime.timedelta()
@@ -308,10 +321,14 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[]):
             # print('\n\n')
             if candidat_dist < dist_voisin:
                 #Ici il faut faire le sauvegarde du trajet
+                sauve = parcour[etape] + [voisin[1]]
+                parcour[voisin[1]] = sauve
                 dist[voisin[1]] = candidat_dist
+#                print('le voisin : ', voisin[1].get_nom())
+#                print('l etape en cours : ', etape.get_nom())
+#                print(dist[voisin[1]])
     visite.append(etape)
-    non_visites = dict(
-        (s, dist.get(s, datetime.timedelta(99999999))) for s in voyage.reseau.values() if s not in visite)
+    non_visites = dict((s, dist.get(s, datetime.timedelta(99999999))) for s in voyage.reseau.values() if s not in visite)
     noeud_plus_proche = min(non_visites, key=non_visites.get)
 
     # for i in dist.keys():
@@ -326,4 +343,58 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[]):
     # print(voyage.heure + dist[noeud_plus_proche])
     # print(noeud_plus_proche.calcule_temps_arret_suivant('n', voyage.heure))
 
-    return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite)
+    return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite, parcour=parcour)
+
+
+def moins_arc(voyage, dist = {}, etape=Arret(''), visite=[], parcour = {}):
+    '''
+    :param voyage: Classe Voyage
+    :param dist: Dictionnaire des distances
+    :param etape: etapes en cours
+    :param visite: liste des etapes visitée
+    :return: le temps le plus cours entre le point de départ et le point d'arrivé
+    '''
+    # Condition de fin :
+    # Quand on traite le noeud de fin alors nous avons fini nous retrournons donc la distance ici un temps
+    if voyage.get_arr().get_nom() == etape.get_nom():
+        return dist[voyage.get_arr()] , parcour[voyage.get_arr()]
+
+    # Si aucun noeud n'a été visite
+    if len(visite) == 0:
+        # On donne comme première etape le debut du voyage
+        dist = changement_dic(voyage.reseau)
+        parcour = changement_dic_parcour(voyage.reseau)
+        etape = voyage.get_dep()
+        # on inisialise la distance pour cette etape a 0
+        dist[etape] = 0
+        temps = voyage.heure
+
+
+    else:
+        temps = voyage.heure + dist[etape]
+
+    # On calcule les temps pour tous les arrets de l'etape en cours et on donne les voisins
+    # Dans [0] il y a le temps et dans [1] le voisin
+    v = etape.calcule_temps_arret_suivant('n', temps)
+    for i in v:
+        i[0] = 1
+    
+    print('voial', v)
+#    for voisin in v:
+#        if voisin[1] not in visite:
+#            dist_voisin = 1 #, datetime.timedelta(99999999)
+#
+#            candidat_dist = dist[etape] + voisin[0]
+#
+#            if candidat_dist < dist_voisin:
+#                #Ici il faut faire le sauvegarde du trajet
+#                sauve = parcour[etape] + [voisin[1]]
+#                parcour[voisin[1]] = sauve
+#                dist[voisin[1]] = candidat_dist
+#
+#    visite.append(etape)
+#    non_visites = dict((s, dist.get(s, datetime.timedelta(99999999))) for s in voyage.reseau.values() if s not in visite)
+#    noeud_plus_proche = min(non_visites, key=non_visites.get)
+
+
+#    return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite, parcour=parcour)
