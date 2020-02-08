@@ -129,10 +129,10 @@ def changement_suivant_pre(data):
         for w in data.values():
 
             for i in range(len(w.suivant)):
-                if t.get_nom() == w.suivant[i]:
+                if t.get_nom() == w.suivant[i] and t.ligne.nom == w.ligne.nom:
                     w.suivant[i] = t
             for u in range(len(w.precedant)):
-                if t.get_nom() == w.precedant[u]:
+                if t.get_nom() == w.precedant[u] and t.ligne.nom == w.ligne.nom:
                     w.precedant[u] = t
 
 
@@ -191,9 +191,6 @@ ligne2.ajout_correspondance(ligne1)
 
 
 
-v1 = Voyage(data,'Meythet_Le_Rabelais',1,'GARE',1,'n','8:22')
-# print(v1.arr.ligne.nom)
-print(plus_cours(v1))
 
 
 
@@ -203,31 +200,9 @@ print(plus_cours(v1))
 # Test console
 # =============================================================================
 
-# print(varl1_1.nom_arret,varl1_1.heure_normal_go, '\n\n',varl1_1.heure_wk_go,'\n\n',varl1_1.heure_normal_back,'\n\n',varl1_1.heure_wk_back)
-# print(varl1_3.suivant,varl1_3.precedant)
-# print(varl1_1.premier_bus('8:22','g','n'))
-# print(varl1_1.difference(varl1_2,18,'g','n'))
-# print(ligne1.correspondance)
-# print(ligne2.correspondance)
-# print(varl1_2.suivant,varl1_2.precedant)
-# print(arret_suivant(regular_path))
-# print(arret_pre(regular_path))
+v1 = Voyage(data,'POISY_COLLÈGE',1,'VIGNIÈRES',2,'n','8:45')
+a = (plus_cours(v1))
+print(a)
+for i in a[1]:
+    print(i.get_nom())
 
-# trajet1 = Voyage(varl1_4,varl1_8)
-# trajet1.direction_short()
-#
-# v1 = Voyage(data,'Vernod','Chorus','n','8:22')
-# print(v1.direction_plus_cours())
-#
-#
-
-
-# h =datetime.datetime.strptime('8:22', '%H:%M')
-# gar = data['varl1_4']
-# print(gar.get_nom())
-# print(gar.tout_les_voisins())
-# a = gar.calcule_temps_arret_suivant('n',h)
-
-
-# gar = data['varl2_11']
-# print(gar.tout_les_voisins())

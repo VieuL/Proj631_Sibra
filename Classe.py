@@ -97,6 +97,7 @@ class Arret:
     def difference(self, arret, i, s, h):
         '''
         Cette fonction renvoi le temps d'att entre deux arrets pour un bus donnée
+
         '''
         if arret.heure_normal_go[i] == '-':
             return datetime.timedelta(99999999)
@@ -106,6 +107,7 @@ class Arret:
             return datetime.timedelta(99999999)
         elif arret.heure_wk_back[i] == '-':
             return datetime.timedelta(99999999)
+
         elif s == 'g' and h == 'n':
             return arret.heure_normal_go[i] - self.heure_normal_go[i]
         elif s == 'g' and h == 'w':
@@ -117,7 +119,8 @@ class Arret:
 
     def tout_les_voisins(self):
         '''
-        Prends en paramètre un arret et retourne les voisins de cette arret, si la ligne est sur correspondance alors elle renvoie aussi les arrets voisins sur l'aurtre ligne
+        Prends en paramètre un arret et retourne les voisins de cette arret, si la ligne est sur correspondance alors
+        elle renvoie aussi les arrets voisins sur l'aurtre ligne
         '''
         retour = []
 
@@ -130,7 +133,7 @@ class Arret:
 
         if v:
             # Dans correspondance de la classe ligne nous avons l'ensemble des arrets qui  sont en commun avec une autre ligne et cette ligne
-            # Il y a un problème dans le cas d'une fourche
+            # ne faut t'il pas que l'arret suivant dans le cas d'une gare soit son arret suivant, son arret précédent et sont arret de transition
 
             for i in range(len(self.get_linge().get_correspondance())):
                 if self.get_nom() == self.get_linge().get_correspondance()[i][0].get_nom():
@@ -143,6 +146,7 @@ class Arret:
                             retour = [deux.get_arrets()[j].get_precenant() + ['b'] + [deux.get_arrets()[j]],
                                       deux.get_arrets()[j].get_suivant() + ['g'] + [deux.get_arrets()[j]],
                                       self.get_precenant() + ['b'] + [self], self.get_suivant() + ['g'] + [self]]
+
         else:
             for u in range(len(self.get_precenant())):
                 a = [self.get_precenant()[u]] + ['b'] + [self]
@@ -285,9 +289,8 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[], parcour = {}):
     :return: le temps le plus cours entre le point de départ et le point d'arrivé
     '''
     # Condition de fin :
-    # Quand on traite le noeud de fin alors nous avons fini nous retrournons donc la distance ici un temps
     if voyage.get_arr().get_nom() == etape.get_nom():
-        return dist[voyage.get_arr()] , parcour[voyage.get_arr()]
+        return dist[etape], parcour[voyage.get_arr()]
 
     # Si aucun noeud n'a été visite
     if len(visite) == 0:
@@ -306,27 +309,21 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[], parcour = {}):
     # On calcule les temps pour tous les arrets de l'etape en cours et on donne les voisins
     # Dans [0] il y a le temps et dans [1] le voisin
     v = etape.calcule_temps_arret_suivant('n', temps)
-    # print(etape)
-    # print('\n\n\n')
-    # print(dist[etape])
-    # print('\n\n\n')
     for voisin in v:
         if voisin[1] not in visite:
-            dist_voisin = dist.get(voisin[1]) #, datetime.timedelta(99999999)
-            # print(dist_voisin)
-            # print(voisin[1].get_nom())
+            dist_voisin = dist.get(voisin[1], datetime.timedelta(99999999))
             candidat_dist = dist[etape] + voisin[0]
-            # print(candidat_dist)
-            # print(etape.get_nom())
-            # print('\n\n')
+
+
             if candidat_dist < dist_voisin:
                 #Ici il faut faire le sauvegarde du trajet
+                # print(etape.get_nom())
                 sauve = parcour[etape] + [voisin[1]]
                 parcour[voisin[1]] = sauve
                 dist[voisin[1]] = candidat_dist
-#                print('le voisin : ', voisin[1].get_nom())
-#                print('l etape en cours : ', etape.get_nom())
-#                print(dist[voisin[1]])
+                # print('l etape en cours : ', etape.get_nom(), etape.get_linge().nom)
+                # print('le voisin : ', voisin[1].get_nom(),voisin[1].get_linge().nom)
+                # print('la distance est de: ', dist[voisin[1]],'\n')
     visite.append(etape)
     non_visites = dict((s, dist.get(s, datetime.timedelta(99999999))) for s in voyage.reseau.values() if s not in visite)
     noeud_plus_proche = min(non_visites, key=non_visites.get)
@@ -337,64 +334,10 @@ def plus_cours(voyage, dist = {}, etape=Arret(''), visite=[], parcour = {}):
     #     print('\n')
     # print(dist)
     # print('\n')
-    # print(noeud_plus_proche.get_nom())
     # print('\n')
-    # print(visite)
+    # print(noeud_plus_proche.get_nom())
     # print(voyage.heure + dist[noeud_plus_proche])
     # print(noeud_plus_proche.calcule_temps_arret_suivant('n', voyage.heure))
 
     return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite, parcour=parcour)
 
-
-def moins_arc(voyage, dist = {}, etape=Arret(''), visite=[], parcour = {}):
-    '''
-    :param voyage: Classe Voyage
-    :param dist: Dictionnaire des distances
-    :param etape: etapes en cours
-    :param visite: liste des etapes visitée
-    :return: le temps le plus cours entre le point de départ et le point d'arrivé
-    '''
-    # Condition de fin :
-    # Quand on traite le noeud de fin alors nous avons fini nous retrournons donc la distance ici un temps
-    if voyage.get_arr().get_nom() == etape.get_nom():
-        return dist[voyage.get_arr()] , parcour[voyage.get_arr()]
-
-    # Si aucun noeud n'a été visite
-    if len(visite) == 0:
-        # On donne comme première etape le debut du voyage
-        dist = changement_dic(voyage.reseau)
-        parcour = changement_dic_parcour(voyage.reseau)
-        etape = voyage.get_dep()
-        # on inisialise la distance pour cette etape a 0
-        dist[etape] = 0
-        temps = voyage.heure
-
-
-    else:
-        temps = voyage.heure + dist[etape]
-
-    # On calcule les temps pour tous les arrets de l'etape en cours et on donne les voisins
-    # Dans [0] il y a le temps et dans [1] le voisin
-    v = etape.calcule_temps_arret_suivant('n', temps)
-    for i in v:
-        i[0] = 1
-    
-    print('voial', v)
-#    for voisin in v:
-#        if voisin[1] not in visite:
-#            dist_voisin = 1 #, datetime.timedelta(99999999)
-#
-#            candidat_dist = dist[etape] + voisin[0]
-#
-#            if candidat_dist < dist_voisin:
-#                #Ici il faut faire le sauvegarde du trajet
-#                sauve = parcour[etape] + [voisin[1]]
-#                parcour[voisin[1]] = sauve
-#                dist[voisin[1]] = candidat_dist
-#
-#    visite.append(etape)
-#    non_visites = dict((s, dist.get(s, datetime.timedelta(99999999))) for s in voyage.reseau.values() if s not in visite)
-#    noeud_plus_proche = min(non_visites, key=non_visites.get)
-
-
-#    return plus_cours(voyage=voyage, dist=dist, etape=noeud_plus_proche, visite=visite, parcour=parcour)
