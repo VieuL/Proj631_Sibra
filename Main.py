@@ -61,10 +61,6 @@ we_holidays_date_back2 = dates2dic(slited_content2[5])
 # =============================================================================
 # Création des graphes
 # =============================================================================
-ligne1 = Ligne(1)
-ligne2 = Ligne(2)
-
-data = {}
 
 
 def arret_suivant(path):
@@ -123,6 +119,11 @@ def transforme_en_heur(liste):
 
 
 def changement_suivant_pre(data):
+    '''
+    Cette fonction sert a transformer les arrets suivants et précédant qui sont de type str à un type Arret
+    :param data: dictionnaire avec l'ensemble des arrêts
+    '''
+
     # on parcour tous les arrets
     for t in data.values():
 
@@ -182,6 +183,10 @@ def creation_var_arret(ligne, pre, date_n_go, date_wk_go, date_n_back, date_wk_b
 # Programme Principal
 # =============================================================================
 #Cette partie du programme peut etre opti facilement
+ligne1 = Ligne(1)
+ligne2 = Ligne(2)
+
+data = {}
 
 # Création des arrets
 creation_var_arret(ligne1, 'varl1_', regular_date_go, we_holidays_date_go, regular_date_back, we_holidays_date_back,
@@ -214,10 +219,12 @@ ligne2.ajout_correspondance(ligne1)
 #     print('previous stop : ', i.get_precenant())
 #     print('\n')
 
-#
-v1 = Voyage(data,'Préfecture_Pâquier',2,'CAMPUS',2,'n','6:32')
+
+v1 = Voyage(data,'France_Barattes',1,'Ponchy',1,'n','10:37')
+v2 = Voyage(data,'LYCÉE_DE_POISY',1,'CAMPUS',2,'n','7:40')
+
 le_moins_arc(v1)
-# aa = ((moins_arc(v1)))
-# print(str(aa[0]).split(':'))
+print('\n')
+le_plus_cours(v2)
 
 
