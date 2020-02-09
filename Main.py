@@ -3,6 +3,7 @@
 Created on Wed Jan 22 09:00:36 2020
 
 @author: vieul
+
 """
 from Classe import *
 import datetime
@@ -137,11 +138,21 @@ def changement_suivant_pre(data):
 
 
 def creation_var_arret(ligne, pre, date_n_go, date_wk_go, date_n_back, date_wk_back, path):
-    """
+    '''
+
+    :param ligne: L'objet de type ligne dont on veut créer les arrets
+    :param pre: Le nom du préfixe
+    :param date_n_go: la liste des horaires pour une date normal (hors wk ou jf) dans le sens go
+    :param date_wk_go: la liste des horaires pour une date de wk  dans le sens go
+    :param date_n_back: la liste des horaires pour une date normal (hors wk ou jf) dans le sens back
+    :param date_wk_back: la liste des horaires pour une date de wk  dans le sens go
+    :param path: liste avec le nom de touts les arrets de la ligne
+
     Cette fonction a pour objectif de crée les variables et les constructeurs de la classe
-    Cette fonction prends pour paramètre un objet de type ligne,
+    Cette fonction prend pour paramètre un objet de type ligne,
     l'ensemble des horraires et le numéro de la ligne
-    """
+    '''
+
 
     arrets = path.replace('+', 'N')
     arrets = arrets.split(' N ')
@@ -170,39 +181,43 @@ def creation_var_arret(ligne, pre, date_n_go, date_wk_go, date_n_back, date_wk_b
 # =============================================================================
 # Programme Principal
 # =============================================================================
+#Cette partie du programme peut etre opti facilement
 
-# Création des lignes de bus
-
-
-# Création d'une variable pour chaque arrets
+# Création des arrets
 creation_var_arret(ligne1, 'varl1_', regular_date_go, we_holidays_date_go, regular_date_back, we_holidays_date_back,
                    regular_path)
 creation_var_arret(ligne2, 'varl2_', regular_date_go2, we_holidays_date_go2, regular_date_back2, we_holidays_date_back2,
                    regular_path2)
 
+# on ajoute les arrets dans la ligne
 ligne1.ajout_arret(data)
 ligne2.ajout_arret(data)
 
+# on remplace les arrets suivant de type str par les arrets de type Arret
 changement_suivant_pre(data)
 
+# on recherche les correspondance
 ligne1.ajout_correspondance(ligne2)
 ligne2.ajout_correspondance(ligne1)
-
-
-
-
-
-
-
-
 
 # =============================================================================
 # Test console
 # =============================================================================
 
-v1 = Voyage(data,'POISY_COLLÈGE',1,'VIGNIÈRES',2,'n','8:45')
-a = (plus_cours(v1))
-print(a)
-for i in a[1]:
-    print(i.get_nom())
+
+
+# Test de la création des diff arrets
+# for i in data.values():
+#     print('num de la ligne : ', i.ligne.nom)
+#     print('nom de l arret : ',i.get_nom())
+#     print('next stop : ', i.get_suivant())
+#     print('previous stop : ', i.get_precenant())
+#     print('\n')
+
+#
+v1 = Voyage(data,'Préfecture_Pâquier',2,'CAMPUS',2,'n','6:32')
+le_moins_arc(v1)
+# aa = ((moins_arc(v1)))
+# print(str(aa[0]).split(':'))
+
 
